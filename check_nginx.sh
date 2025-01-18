@@ -1,27 +1,19 @@
 #!/bin/bash
 
-# Diretório para os arquivos de log
-LOG_DIR="/var/log/nginx_check" # Altere se necessário
-mkdir -p "$LOG_DIR"
+# Caminhos dos arquivos de log
+LOG_ONLINE="./log_online.txt"
+LOG_OFFLINE="./log_offline.txt"
 
-# Data e hora
-DATA_HORA=$(date "+%Y-%m-%d %H:%M:%S")
+# verificar se os arquivos de log existem, se não cria -os
+touch "$LOG_ONLINE" "$LOG_OFFLINE"
 
-# Nome do serviço
-SERVICO="Nginx"
-
-# Verifica o status do Nginx
+# Verifica o status do serviço Nginx
 if systemctl is-active --quiet nginx; then
-  STATUS="ONLINE"
-  MENSAGEM="Serviço Nginx está online."
-  LOG_FILE="$LOG_DIR/nginx_online.log"
+    # Serviço está ativo
+    echo "$(date): Nginx está ONLINE." >> "$LOG_ONLINE"
+    echo "Nginx está funcionando normalmente."
 else
-  STATUS="OFFLINE"
-  MENSAGEM="Serviço Nginx está offline!"
-  LOG_FILE="$LOG_DIR/nginx_offline.log"
+    # Serviço está inativo
+    echo "$(date): Nginx está OFFLINE." >> "$LOG_OFFLINE"
+    echo "Nginx não está funcionando."
 fi
-
-# Escreve no arquivo de log
-echo "$DATA_HORA - $SERVICO - $STATUS - $MENSAGEM" >> "$LOG_FILE"
-
-echo "$MENSAGEM" # Imprime a mensagem no console para feedback imediato (opcional)
